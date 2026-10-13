@@ -38,7 +38,12 @@ export default function MenuPage() {
         const normalizedSearch = debouncedSearch.trim().toLowerCase();
 
         return dishes.filter((dish) => {
-            const matchesCategory = category === 'Все' || dish.category === category;
+            const categoryMap = {
+                'Основные блюда': 'Горячее',
+            };
+
+            const matchesCategory =
+                category === 'Все' || dish.category === (categoryMap[category] || category);
             const matchesSearch = dish.name.toLowerCase().includes(normalizedSearch);
             return matchesCategory && matchesSearch;
         });

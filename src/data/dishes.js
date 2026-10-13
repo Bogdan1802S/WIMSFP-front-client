@@ -21,4 +21,12 @@ export const dishes = [
     { id: 'latte', name: 'Латте', category: 'Напитки', price: 280, weight: 250, image: photo('photo-1461023058943-07fcbe16d735'), composition: [{ productId: 'milk', amount: 0.18 }] },
 ];
 
-export const categories = ['Все', 'Супы', 'Горячее', 'Салаты', 'Закуски', 'Десерты', 'Напитки'];
+export const categories = [
+    'Все',
+    'Супы',
+    'Основные блюда',
+    'Салаты',
+    'Закуски',
+    'Десерты',
+    'Напитки',
+];
