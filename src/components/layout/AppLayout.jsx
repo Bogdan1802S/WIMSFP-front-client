@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, NavLink, Outlet } from 'react-router-dom';
 import { Menu, ShoppingCart, X } from 'lucide-react';
 import { useCartStore } from '@/store/cartStore.js';
+import SiteFooter from '@/components/layout/SiteFooter.jsx';
 import '@/styles/layout.css';
 
 export default function AppLayout() {
@@ -12,13 +13,14 @@ export default function AppLayout() {
     );
 
     return (
-        <div className="app-shell">
+        <div className="app-shell" id="top">
             <header className="site-header">
                 <div className="site-header__inner">
                     <Link className="brand" to="/" aria-label="Тёплый двор — на главную">
             <span className="brand__mark" aria-hidden="true">
               🍲
             </span>
+
                         <span className="brand__copy">
               <span className="brand__name">Тёплый двор</span>
               <span className="brand__caption">Домашняя кухня</span>
@@ -77,9 +79,7 @@ export default function AppLayout() {
                 <Outlet />
             </main>
 
-            <footer className="site-footer">
-                Тёплый двор · Вкусная пауза в вашем дне
-            </footer>
+            <SiteFooter />
         </div>
     );
 }

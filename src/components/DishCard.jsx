@@ -40,7 +40,6 @@ export default function DishCard({ dish, qty, stopped, offer, onAdd, onRemove })
                             aria-hidden={hasItems}
                             aria-label={`Добавить ${dish.name} в корзину`}
                         >
-                            <Plus size={17} aria-hidden="true" />
                             Добавить
                         </button>
 
