@@ -6,8 +6,8 @@
     position: sticky;
     z-index: 20;
     top: 0;
-    background: rgba(255, 253, 250, 0.94);
-    border-bottom: 1px solid rgba(85, 62, 42, 0.08);
+    border-bottom: 1px solid rgba(104, 78, 55, 0.09);
+    background: rgba(255, 250, 244, 0.96);
     backdrop-filter: blur(14px);
 }
 
@@ -34,7 +34,7 @@
     height: 36px;
     place-items: center;
     border-radius: 13px;
-    background: #f3c39e;
+    background: #f4d2b5;
     font-size: 18px;
 }
 
@@ -44,14 +44,14 @@
 }
 
 .brand__name {
-    color: #382c23;
+    color: var(--color-ink);
     font-size: 14px;
     font-weight: 800;
     line-height: 1.2;
 }
 
 .brand__caption {
-    color: #82766d;
+    color: var(--color-muted);
     font-size: 11px;
 }
 
@@ -63,15 +63,18 @@
     gap: 10px;
     margin: 0 auto;
     padding: 0 13px;
-    border: 1px solid #e3e8ee;
+    border: 1px solid #e9e1d8;
     border-radius: 999px;
     background: #fff;
-    color: #93877c;
+    color: #95897e;
+    transition:
+            border-color 160ms ease,
+            box-shadow 160ms ease;
 }
 
 .site-search:focus-within {
-    border-color: #df9968;
-    box-shadow: 0 0 0 3px rgba(223, 153, 104, 0.13);
+    border-color: #dda875;
+    box-shadow: 0 0 0 3px rgba(221, 168, 117, 0.13);
 }
 
 .site-search input {
@@ -89,7 +92,7 @@
 }
 
 .site-search input::placeholder {
-    color: #92877f;
+    color: #958a80;
 }
 
 .desktop-nav {
@@ -102,22 +105,25 @@
 .mobile-menu__link {
     border-radius: 999px;
     padding: 9px 15px;
-    color: #61564d;
+    color: #766b61;
     font-size: 14px;
     font-weight: 600;
     text-decoration: none;
-    transition: background 180ms ease, color 180ms ease;
+    transition:
+            background 180ms ease,
+            color 180ms ease;
 }
 
 .nav-link:hover,
 .mobile-menu__link:hover {
-    background: #fff0e3;
+    background: #fff0df;
+    color: #995323;
 }
 
 .nav-link--active,
 .mobile-menu__link--active {
-    background: #ffe7d1;
-    color: #9b4d24;
+    background: #fbe7d4;
+    color: #985324;
 }
 
 .cart-link {
@@ -134,7 +140,9 @@
     font-size: 14px;
     font-weight: 700;
     text-decoration: none;
-    transition: background 180ms ease, transform 180ms ease;
+    transition:
+            background 180ms ease,
+            transform 180ms ease;
 }
 
 .cart-link:hover {

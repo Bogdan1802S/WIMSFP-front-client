@@ -9,17 +9,17 @@
 }
 
 .empty-state__icon {
-    color: #e6a475;
+    color: #dca875;
 }
 
 .empty-state__title {
     margin: 0;
-    color: #302821;
+    color: var(--color-ink);
     font-weight: 700;
 }
 
 .empty-state__text {
     margin: 0;
-    color: #82766d;
+    color: var(--color-muted);
     font-size: 14px;
 }

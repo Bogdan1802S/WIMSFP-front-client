@@ -11,22 +11,22 @@
 
 .cart-page__title {
     margin: 0;
-    color: #302821;
+    color: var(--color-ink);
     font-size: 32px;
     font-weight: 700;
 }
 
 .cart-page__subtitle {
     margin: 5px 0 0;
-    color: #82766d;
+    color: var(--color-muted);
 }
 
 .cart-alert {
-    border: 1px solid #f2d09b;
+    border: 1px solid #ead6b4;
     border-radius: 13px;
     padding: 13px 15px;
-    background: #fff6e7;
-    color: #78521c;
+    background: #fbf3df;
+    color: #765d2d;
     font-size: 14px;
 }
 
@@ -37,9 +37,9 @@
 
 .cart-item,
 .checkout-card {
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(104, 78, 55, 0.07);
     border-radius: 17px;
-    background: #fff;
+    background: var(--color-paper);
     box-shadow: var(--shadow-card);
 }
 
@@ -67,6 +67,7 @@
 .cart-item__name {
     overflow: hidden;
     margin: 0;
+    color: var(--color-ink);
     font-size: 16px;
     font-weight: 700;
     text-overflow: ellipsis;
@@ -74,7 +75,7 @@
 
 .cart-item__meta {
     margin: 5px 0 0;
-    color: #82766d;
+    color: var(--color-muted);
     font-size: 13px;
 }
 
@@ -92,16 +93,24 @@
     height: 42px;
     flex: 0 0 42px;
     place-items: center;
-    border: 1px solid #e1e6ec;
+    border: 1px solid var(--color-border);
     border-radius: 11px;
     background: #fff;
-    color: #302821;
+    color: var(--color-ink);
     font-size: 20px;
+    transition:
+            background 160ms ease,
+            transform 160ms ease;
 }
 
 .quantity-button:hover,
 .remove-button:hover {
-    background: #fff4eb;
+    background: #fff2e4;
+}
+
+.quantity-button:active,
+.remove-button:active {
+    transform: scale(0.97);
 }
 
 .quantity-button--accent {
@@ -119,12 +128,13 @@
 }
 
 .remove-button {
-    border: 0;
-    color: #b44942;
+    border-color: transparent;
+    color: #a34c40;
 }
 
 .cart-item__quantity {
     min-width: 22px;
+    color: var(--color-ink);
     font-weight: 700;
     text-align: center;
 }
@@ -137,6 +147,7 @@
 
 .checkout-card__title {
     margin: 0 0 2px;
+    color: var(--color-ink);
     font-size: 20px;
     font-weight: 700;
 }
@@ -152,13 +163,15 @@
     display: block;
     width: 100%;
     min-height: 44px;
-    border: 1px solid #d9e0e8;
+    border: 1px solid #e8ded4;
     border-radius: 10px;
     padding: 10px 14px;
     background: #fff;
-    color: #302821;
+    color: var(--color-ink);
     outline: 0;
-    transition: border-color 160ms ease, box-shadow 160ms ease;
+    transition:
+            border-color 160ms ease,
+            box-shadow 160ms ease;
 }
 
 .form-field select {
@@ -172,27 +185,28 @@
 
 .form-field input::placeholder,
 .form-field textarea::placeholder {
-    color: #8993a1;
+    color: #91877e;
 }
 
 .form-field input:focus,
 .form-field select:focus,
 .form-field textarea:focus {
-    border-color: #df9968;
-    box-shadow: 0 0 0 3px rgba(223, 153, 104, 0.14);
+    border-color: #dda875;
+    box-shadow: 0 0 0 3px rgba(221, 168, 117, 0.14);
 }
 
 .checkout-total {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-top: 1px solid #eee8e2;
+    border-top: 1px solid #eee6dd;
     padding-top: 16px;
+    color: var(--color-ink);
     font-weight: 700;
 }
 
 .checkout-total strong {
-    color: #98451f;
+    color: #92552f;
     font-size: 23px;
 }
 
@@ -207,7 +221,9 @@
     background: var(--color-orange);
     color: #fff;
     font-weight: 700;
-    transition: background 160ms ease, transform 160ms ease;
+    transition:
+            background 160ms ease,
+            transform 160ms ease;
 }
 
 .checkout-submit:hover:not(:disabled) {
@@ -225,7 +241,7 @@
 
 .checkout-hint {
     margin: -4px 0 0;
-    color: #b43c3c;
+    color: #a34c40;
     font-size: 13px;
 }
 
@@ -236,26 +252,28 @@
     display: grid;
     place-items: center;
     padding: 20px;
-    background: rgba(34, 27, 22, 0.45);
+    background: rgba(48, 39, 30, 0.44);
 }
 
 .result-modal {
     position: relative;
     width: min(100%, 440px);
+    border: 1px solid rgba(104, 78, 55, 0.08);
     border-radius: 18px;
     padding: 26px;
-    background: #fff;
-    box-shadow: 0 18px 60px rgba(30, 20, 10, 0.22);
+    background: var(--color-paper);
+    box-shadow: 0 18px 60px rgba(50, 39, 27, 0.19);
 }
 
 .result-modal h2 {
     margin: 0 36px 12px 0;
+    color: var(--color-ink);
     font-size: 21px;
 }
 
 .result-modal p {
     margin: 0;
-    color: #625950;
+    color: #756a60;
     line-height: 1.55;
     overflow-wrap: anywhere;
 }
@@ -270,7 +288,7 @@
     place-items: center;
     border: 0;
     border-radius: 50%;
-    background: #f7f2ed;
+    background: #f8f1e9;
     color: #51483f;
 }
 

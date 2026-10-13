@@ -2,7 +2,7 @@
 
 :root {
     font-family: 'Google Sans', Arial, sans-serif;
-    color: #302821;
+    color: #302a25;
     background: #fff8f1;
     font-synthesis: none;
     text-rendering: optimizeLegibility;
@@ -11,14 +11,19 @@
     font-optical-sizing: auto;
     font-weight: 400;
     font-size: 16px;
-    --color-ink: #302821;
-    --color-muted: #82766d;
-    --color-orange: #e66b18;
-    --color-orange-dark: #ce5c12;
-    --color-orange-soft: #fff0d8;
-    --color-border: #e7ddd4;
-    --color-paper: #ffffff;
-    --shadow-card: 0 4px 20px rgba(120, 80, 40, 0.08);
+
+    --color-ink: #302a25;
+    --color-muted: #8c8177;
+    --color-orange: #df7625;
+    --color-orange-dark: #ce681b;
+    --color-orange-soft: #fff0dd;
+    --color-orange-pale: #fff5e9;
+    --color-orange-border: #edd0b5;
+    --color-border: #eee5dc;
+    --color-paper: #fff;
+    --color-page: #fff8f1;
+    --color-sidebar: #fff1e3;
+    --shadow-card: 0 4px 16px rgba(92, 65, 42, 0.07);
 }
 
 * {
@@ -34,7 +39,7 @@ body {
     min-width: 320px;
     min-height: 100vh;
     margin: 0;
-    background: linear-gradient(135deg, #fff8f1 0%, #fbefe6 100%);
+    background: linear-gradient(135deg, #fff9f3 0%, #fbf2e9 100%);
 }
 
 body,
@@ -70,7 +75,7 @@ img {
 }
 
 :focus-visible {
-    outline: 3px solid #df9968;
+    outline: 3px solid #dfa36f;
     outline-offset: 3px;
 }
 
