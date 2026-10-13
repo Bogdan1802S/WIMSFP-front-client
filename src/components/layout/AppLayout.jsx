@@ -1,14 +1,12 @@
 import { useState } from 'react';
 import { Link, NavLink, Outlet } from 'react-router-dom';
-import { Menu, Search, ShoppingCart, X } from 'lucide-react';
+import { Menu, ShoppingCart, X } from 'lucide-react';
 import { useCartStore } from '@/store/cartStore.js';
-import { useUiStore } from '@/store/uiStore.js';
 import '@/styles/layout.css';
 
 export default function AppLayout() {
     const [menuOpen, setMenuOpen] = useState(false);
-    const search = useUiStore((state) => state.search);
-    const setSearch = useUiStore((state) => state.setSearch);
+
     const cartCount = useCartStore((state) =>
         state.items.reduce((sum, item) => sum + item.qty, 0),
     );
@@ -27,19 +25,14 @@ export default function AppLayout() {
             </span>
                     </Link>
 
-                    <label className="site-search">
-                        <Search size={17} aria-hidden="true" />
-                        <input
-                            type="search"
-                            value={search}
-                            onChange={(event) => setSearch(event.target.value)}
-                            placeholder="Найти блюдо..."
-                            aria-label="Поиск блюд"
-                        />
-                    </label>
-
                     <nav className="desktop-nav" aria-label="Основная навигация">
-                        <NavLink to="/" end className={({ isActive }) => `nav-link${isActive ? ' nav-link--active' : ''}`}>
+                        <NavLink
+                            to="/"
+                            end
+                            className={({ isActive }) =>
+                                `nav-link${isActive ? ' nav-link--active' : ''}`
+                            }
+                        >
                             Меню
                         </NavLink>
                     </nav>
@@ -65,26 +58,18 @@ export default function AppLayout() {
                 </div>
 
                 {menuOpen && (
-                    <div className="mobile-menu">
-                        <label className="site-search site-search--mobile">
-                            <Search size={17} aria-hidden="true" />
-                            <input
-                                type="search"
-                                value={search}
-                                onChange={(event) => setSearch(event.target.value)}
-                                placeholder="Найти блюдо..."
-                                aria-label="Поиск блюд"
-                            />
-                        </label>
+                    <nav className="mobile-menu" aria-label="Навигация">
                         <NavLink
                             to="/"
                             end
-                            className={({ isActive }) => `mobile-menu__link${isActive ? ' mobile-menu__link--active' : ''}`}
+                            className={({ isActive }) =>
+                                `mobile-menu__link${isActive ? ' mobile-menu__link--active' : ''}`
+                            }
                             onClick={() => setMenuOpen(false)}
                         >
                             Меню
                         </NavLink>
-                    </div>
+                    </nav>
                 )}
             </header>
 

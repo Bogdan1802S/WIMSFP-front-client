@@ -1,6 +1,6 @@
 .menu-page {
     display: grid;
-    gap: 30px;
+    gap: 24px;
 }
 
 .menu-hero {
@@ -92,6 +92,32 @@
     font-size: 13px;
 }
 
+/* Поиск расположен после рекомендаций и перед категориями меню. */
+.menu-search {
+    width: 100%;
+    max-width: none;
+    height: 56px;
+    margin: 0;
+    padding: 0 18px;
+    border-color: #e8e2dc;
+    border-radius: 17px;
+    color: #8f8982;
+    box-shadow: 0 2px 8px rgba(92, 65, 42, 0.025);
+}
+
+.menu-search:focus-within {
+    border-color: #dda875;
+    box-shadow: 0 0 0 3px rgba(221, 168, 117, 0.13);
+}
+
+.menu-search input {
+    font-size: 16px;
+}
+
+.menu-search input::placeholder {
+    color: #9a958f;
+}
+
 .day-pick {
     display: inline-flex;
     flex: 0 0 auto;
@@ -177,7 +203,7 @@
 
 @media (max-width: 600px) {
     .menu-page {
-        gap: 24px;
+        gap: 20px;
     }
 
     .menu-hero {
@@ -200,6 +226,16 @@
     .menu-section__subtitle {
         max-width: 230px;
         font-size: 12px;
+    }
+
+    .menu-search {
+        height: 54px;
+        border-radius: 16px;
+        padding: 0 16px;
+    }
+
+    .menu-search input {
+        font-size: 15px;
     }
 
     .day-pick {

@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Badge } from '@chakra-ui/react';
-import { Flame } from 'lucide-react';
+import { Flame, Search } from 'lucide-react';
 import { categories, dishes } from '@/data/dishes.js';
 import { products } from '@/data/products.js';
 import DishCard from '@/components/DishCard.jsx';
@@ -15,14 +14,21 @@ import '@/styles/menu.css';
 
 export default function MenuPage() {
     const [category, setCategory] = useState('Все');
+
     const search = useUiStore((state) => state.search);
+    const setSearch = useUiStore((state) => state.setSearch);
     const debouncedSearch = useDebounce(search);
+
     const items = useCartStore((state) => state.items);
     const add = useCartStore((state) => state.add);
     const setQty = useCartStore((state) => state.setQty);
     const batches = useInventoryStore((state) => state.batches);
 
-    const stopList = useMemo(() => computeStopList(dishes, batches), [batches]);
+    const stopList = useMemo(
+        () => computeStopList(dishes, batches),
+        [batches],
+    );
+
     const offers = useMemo(
         () => computeHotOffers(dishes, products, batches, stopList),
         [batches, stopList],
@@ -32,6 +38,7 @@ export default function MenuPage() {
         () => new Set(stopList.map((item) => item.dishId)),
         [stopList],
     );
+
     const offerMap = useMemo(
         () => new Map(offers.map((offer) => [offer.dishId, offer])),
         [offers],
@@ -41,10 +48,17 @@ export default function MenuPage() {
         const normalizedSearch = debouncedSearch.trim().toLowerCase();
 
         return dishes.filter((dish) => {
-            const categoryMap = { 'Основные блюда': 'Горячее' };
+            const categoryMap = {
+                'Основные блюда': 'Горячее',
+            };
+
             const matchesCategory =
-                category === 'Все' || dish.category === (categoryMap[category] || category);
-            const matchesSearch = dish.name.toLowerCase().includes(normalizedSearch);
+                category === 'Все' ||
+                dish.category === (categoryMap[category] || category);
+
+            const matchesSearch = dish.name
+                .toLowerCase()
+                .includes(normalizedSearch);
 
             return matchesCategory && matchesSearch;
         });
@@ -67,24 +81,34 @@ export default function MenuPage() {
             document.getElementById('recommendations-section') ||
             document.getElementById('menu-section');
 
-        target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        target?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+        });
     };
 
     return (
         <div className="menu-page">
             <section className="menu-hero">
-                <Badge className="menu-hero__eyebrow">
-                    Домашняя кухня · готовим с любовью
-                </Badge>
+        <span className="menu-hero__eyebrow">
+          Домашняя кухня · готовим с любовью
+        </span>
+
                 <h1 className="menu-hero__title">
                     Что сегодня
                     <br />
                     будет вкусного?
                 </h1>
+
                 <p className="menu-hero__description">
                     Выберите любимые блюда — мы приготовим их свежими и бережно упакуем.
                 </p>
-                <button className="menu-hero__button" type="button" onClick={scrollToMenu}>
+
+                <button
+                    className="menu-hero__button"
+                    type="button"
+                    onClick={scrollToMenu}
+                >
                     Смотреть меню
                 </button>
             </section>
@@ -97,13 +121,17 @@ export default function MenuPage() {
                 >
                     <div className="menu-section__heading">
                         <div>
-                            <h2 className="menu-section__title" id="recommendations-title">
+                            <h2
+                                className="menu-section__title"
+                                id="recommendations-title"
+                            >
                                 Сегодня рекомендуем
                             </h2>
                             <p className="menu-section__subtitle">
                                 Вкусные блюда, которые особенно хороши сегодня
                             </p>
                         </div>
+
                         <span className="day-pick">
               <Flame size={14} strokeWidth={1.8} aria-hidden="true" />
               ВЫБОР ДНЯ
@@ -112,7 +140,8 @@ export default function MenuPage() {
 
                     <div className="dish-grid dish-grid--featured">
                         {recommendedDishes.map((dish) => {
-                            const qty = items.find((item) => item.dishId === dish.id)?.qty || 0;
+                            const qty =
+                                items.find((item) => item.dishId === dish.id)?.qty || 0;
 
                             return (
                                 <DishCard
@@ -129,7 +158,22 @@ export default function MenuPage() {
                 </section>
             )}
 
-            <section className="menu-section" id="menu-section" aria-labelledby="menu-title">
+            <label className="site-search menu-search">
+                <Search size={20} aria-hidden="true" />
+                <input
+                    type="search"
+                    value={search}
+                    onChange={(event) => setSearch(event.target.value)}
+                    placeholder="Поиск"
+                    aria-label="Поиск блюд"
+                />
+            </label>
+
+            <section
+                className="menu-section"
+                id="menu-section"
+                aria-labelledby="menu-title"
+            >
                 <h2 className="menu-section__title menu-section__title--menu" id="menu-title">
                     Меню
                 </h2>
@@ -138,7 +182,9 @@ export default function MenuPage() {
                     {categories.map((item) => (
                         <button
                             key={item}
-                            className={`category-button${category === item ? ' category-button--active' : ''}`}
+                            className={`category-button${
+                                category === item ? ' category-button--active' : ''
+                            }`}
                             type="button"
                             aria-pressed={category === item}
                             onClick={() => setCategory(item)}
@@ -148,10 +194,11 @@ export default function MenuPage() {
                     ))}
                 </div>
 
-                {filteredDishes.length ? (
+                {filteredDishes.length > 0 ? (
                     <div className="dish-grid">
                         {filteredDishes.map((dish) => {
-                            const qty = items.find((item) => item.dishId === dish.id)?.qty || 0;
+                            const qty =
+                                items.find((item) => item.dishId === dish.id)?.qty || 0;
                             const stopped = stoppedIds.has(dish.id);
 
                             return (

@@ -55,50 +55,11 @@
     font-size: 11px;
 }
 
-.site-search {
-    display: flex;
-    width: min(100%, 430px);
-    height: 40px;
-    align-items: center;
-    gap: 10px;
-    margin: 0 auto;
-    padding: 0 13px;
-    border: 1px solid #e9e1d8;
-    border-radius: 999px;
-    background: #fff;
-    color: #95897e;
-    transition:
-            border-color 160ms ease,
-            box-shadow 160ms ease;
-}
-
-.site-search:focus-within {
-    border-color: #dda875;
-    box-shadow: 0 0 0 3px rgba(221, 168, 117, 0.13);
-}
-
-.site-search input {
-    width: 100%;
-    min-width: 0;
-    border: 0;
-    outline: 0;
-    background: transparent;
-    color: var(--color-ink);
-    font-size: 14px;
-}
-
-.site-search input:focus-visible {
-    outline: 0;
-}
-
-.site-search input::placeholder {
-    color: #958a80;
-}
-
 .desktop-nav {
     display: flex;
     align-items: center;
     gap: 5px;
+    margin-left: auto;
 }
 
 .nav-link,
@@ -166,6 +127,46 @@
     display: none;
 }
 
+.site-search {
+    display: flex;
+    width: min(100%, 430px);
+    height: 40px;
+    align-items: center;
+    gap: 10px;
+    margin: 0 auto;
+    padding: 0 13px;
+    border: 1px solid #e9e1d8;
+    border-radius: 999px;
+    background: #fff;
+    color: #95897e;
+    transition:
+            border-color 160ms ease,
+            box-shadow 160ms ease;
+}
+
+.site-search:focus-within {
+    border-color: #dda875;
+    box-shadow: 0 0 0 3px rgba(221, 168, 117, 0.13);
+}
+
+.site-search input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--color-ink);
+    font-size: 14px;
+}
+
+.site-search input:focus-visible {
+    outline: 0;
+}
+
+.site-search input::placeholder {
+    color: #958a80;
+}
+
 .site-main {
     width: min(100% - 40px, 1280px);
     min-height: calc(100vh - 130px);
@@ -204,7 +205,6 @@
         font-size: 10px;
     }
 
-    .site-header__inner > .site-search,
     .desktop-nav {
         display: none;
     }
@@ -212,6 +212,7 @@
     .cart-link {
         min-height: 38px;
         gap: 5px;
+        margin-left: auto;
         padding: 0 11px;
         font-size: 13px;
     }
@@ -221,15 +222,11 @@
     }
 
     .mobile-menu {
-        display: grid;
+        display: flex;
         width: calc(100% - 24px);
         gap: 8px;
         margin: 0 auto;
         padding: 0 0 12px;
-    }
-
-    .site-search--mobile {
-        width: 100%;
     }
 
     .mobile-menu__link {
