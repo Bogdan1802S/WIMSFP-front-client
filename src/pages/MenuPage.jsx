@@ -77,13 +77,24 @@ export default function MenuPage() {
                 <Text mt="3" color="gray.600" maxW="560px">
                     Выберите любимые блюда — мы приготовим их свежими и бережно упакуем.
                 </Text>
-                <Button as={Link} to="/cart" mt="5" colorScheme="orange" borderRadius="full">
-                    Перейти к заказу
+                <Button
+                    mt="5"
+                    colorScheme="orange"
+                    borderRadius="full"
+                    onClick={() => {
+                        const target =
+                            document.getElementById('recommendations-section') ||
+                            document.getElementById('menu-section');
+
+                        target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }}
+                >
+                    Смотреть меню
                 </Button>
             </Box>
 
             {!search.trim() && category === 'Все' && recommendedDishes.length > 0 && (
-                <Box>
+                <Box id="recommendations-section" scrollMarginTop="24px">
                     <HStack justify="space-between" mb="4">
                         <Box>
                             <Text fontFamily="heading" fontSize="2xl" fontWeight="700">
@@ -127,7 +138,7 @@ export default function MenuPage() {
                 </Box>
             )}
 
-            <Box>
+            <Box id="menu-section" scrollMarginTop="24px">
                 <Text fontFamily="heading" fontSize="2xl" fontWeight="700" mb="4">
                     Меню
                 </Text>

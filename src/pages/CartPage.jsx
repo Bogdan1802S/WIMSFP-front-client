@@ -1,4 +1,3 @@
-import { useMemo, useState } from 'react';
 import {
     Alert,
     AlertIcon,
@@ -30,6 +29,41 @@ import { useCartStore } from '@/store/cartStore.js';
 import { useInventoryStore } from '@/store/inventoryStore.js';
 import { money, quantity } from '@/utils/format.js';
 import EmptyState from '@/components/EmptyState.jsx';
+import { useMemo, useRef, useState } from 'react';
+
+function formatRussianPhone(value) {
+    let digits = value.replace(/\D/g, '').slice(0, 11);
+
+    // Если номер вставили с кодом страны или начальной 8, убираем этот префикс:
+    // маска сама добавит +7.
+    if (digits.startsWith('7') || digits.startsWith('8')) {
+        digits = digits.slice(1);
+    }
+
+    digits = digits.slice(0, 10);
+
+    if (!digits) return '';
+
+    let formatted = `+7-(${digits.slice(0, 3)}`;
+
+    if (digits.length >= 3) {
+        formatted += ')';
+    }
+
+    if (digits.length > 3) {
+        formatted += `-${digits.slice(3, 6)}`;
+    }
+
+    if (digits.length > 6) {
+        formatted += `-${digits.slice(6, 8)}`;
+    }
+
+    if (digits.length > 8) {
+        formatted += `-${digits.slice(8, 10)}`;
+    }
+
+    return formatted;
+}
 
 export default function CartPage() {
     const cart = useCartStore((state) => state.items);
@@ -41,6 +75,7 @@ export default function CartPage() {
     const batches = useInventoryStore((state) => state.batches);
     const [customerName, setCustomerName] = useState('');
     const [phone, setPhone] = useState('');
+    const phoneInputRef = useRef(null);
     const [fulfillment, setFulfillment] = useState('Самовывоз');
     const [confirmation, setConfirmation] = useState('');
     const modal = useDisclosure();
@@ -55,14 +90,79 @@ export default function CartPage() {
         return sum + (dish?.price || 0) * item.qty;
     }, 0);
 
+    const handlePhoneKeyDown = (event) => {
+        if (event.key !== 'Backspace') return;
+
+        const input = event.currentTarget;
+        const start = input.selectionStart ?? 0;
+        const end = input.selectionEnd ?? start;
+        const digitPositions = [];
+
+        for (let index = 0; index < phone.length; index += 1) {
+            if (/\d/.test(phone[index])) digitPositions.push(index);
+        }
+
+        const selectedDigits = digitPositions
+            .map((position, digitIndex) => ({ position, digitIndex }))
+            .filter(({ position, digitIndex }) => position >= start && position < end && digitIndex > 0);
+
+        let removeIndex = -1;
+
+        if (selectedDigits.length) {
+            removeIndex = selectedDigits[0].digitIndex;
+        } else if (start === end) {
+            for (let index = digitPositions.length - 1; index >= 0; index -= 1) {
+                if (digitPositions[index] < start) {
+                    // Первая цифра — код страны 7, его маска не удаляет.
+                    if (index > 0) removeIndex = index;
+                    break;
+                }
+            }
+        }
+
+        event.preventDefault();
+
+        if (removeIndex < 0) return;
+
+        const digits = phone.replace(/\D/g, '').split('');
+        digits.splice(removeIndex, selectedDigits.length || 1);
+
+        const nextPhone = formatRussianPhone(digits.join(''));
+        setPhone(nextPhone);
+
+        const digitsBeforeCursor = phone
+            .slice(0, start)
+            .replace(/\D/g, '')
+            .length;
+        const nextDigitCount = Math.max(
+            1,
+            digitsBeforeCursor - (selectedDigits.length ? 0 : 1),
+        );
+
+        requestAnimationFrame(() => {
+            const nextInput = phoneInputRef.current;
+            if (!nextInput) return;
+
+            let position = 0;
+            let count = 0;
+
+            while (position < nextPhone.length && count < nextDigitCount) {
+                if (/\d/.test(nextPhone[position])) count += 1;
+                position += 1;
+            }
+
+            nextInput.setSelectionRange(position, position);
+        });
+    };
+
     const submitOrder = () => {
         if (!customerName.trim()) {
             toast.error('Введите, пожалуйста, ваше имя');
             return;
         }
 
-        if (!phone.trim()) {
-            toast.error('Укажите номер телефона для заказа');
+        if (phone.replace(/\D/g, '').length !== 11) {
+            toast.error('Введите номер телефона полностью');
             return;
         }
 
@@ -198,11 +298,15 @@ export default function CartPage() {
                         />
 
                         <Input
+                            ref={phoneInputRef}
                             value={phone}
-                            onChange={(event) => setPhone(event.target.value)}
-                            placeholder="Номер телефона"
+                            onChange={(event) => setPhone(formatRussianPhone(event.target.value))}
+                            onKeyDown={handlePhoneKeyDown}
+                            placeholder="+7-(999)-999-99-99"
                             aria-label="Номер телефона"
                             type="tel"
+                            inputMode="numeric"
+                            maxLength={18}
                             isRequired
                         />
 

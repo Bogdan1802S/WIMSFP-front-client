@@ -60,23 +60,25 @@ export default function DishCard({ dish, qty, stopped, offer, onAdd, onRemove })
             </Box>
 
             <CardBody>
-                <VStack align="stretch" spacing="3">
-                    <Text fontWeight="700" fontSize="lg" noOfLines={1}>
-                        {dish.name}
-                    </Text>
+                <VStack align="stretch" spacing="4">
+                    <VStack align="stretch" spacing="0.2">
+                        <Text fontWeight="700" noOfLines={1}>
+                            {dish.name}
+                        </Text>
 
-                    <HStack justify="space-between">
-                        <Text fontWeight="800" color="#98451f">
-                            {money(dish.price)}
-                        </Text>
-                        <Text color="gray.500" fontSize="sm">
-                            {dish.weight} г
-                        </Text>
-                    </HStack>
+                        <HStack justify="space-between">
+                            <Text fontWeight="700" color="brand.600">
+                                {money(dish.price)}
+                            </Text>
+                            <Text color="gray.500" fontSize="sm">
+                                {dish.weight} г
+                            </Text>
+                        </HStack>
+                    </VStack>
 
                     {stopped ? (
-                        <Button isDisabled w="full" variant="outline" aria-label={`${dish.name} временно недоступно`}>
-                            Скоро вернётся
+                        <Button isDisabled w="full" variant="outline">
+                            Временно недоступно
                         </Button>
                     ) : qty > 0 ? (
                         <HStack justify="space-between">
@@ -87,9 +89,9 @@ export default function DishCard({ dish, qty, stopped, offer, onAdd, onRemove })
                             >
                                 <Minus size={17} />
                             </Button>
-                            <Text fontWeight="700" aria-live="polite">
-                                {qty} в корзине
-                            </Text>
+
+                            <Text fontWeight="700">{qty} в корзине</Text>
+
                             <Button
                                 aria-label={`Добавить порцию: ${dish.name}`}
                                 colorScheme="orange"
@@ -102,7 +104,6 @@ export default function DishCard({ dish, qty, stopped, offer, onAdd, onRemove })
                         <Button
                             w="full"
                             colorScheme="orange"
-                            leftIcon={<Plus size={17} />}
                             onClick={onAdd}
                         >
                             Добавить
