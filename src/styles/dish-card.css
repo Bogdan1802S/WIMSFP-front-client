@@ -26,16 +26,22 @@
     position: relative;
     overflow: hidden;
     background: #f2e8de;
+    isolation: isolate;
 }
 
 .dish-card__image-wrap::after {
     position: absolute;
-    inset: 45% 0 0;
-    background: linear-gradient(transparent, rgba(53, 39, 25, 0.36));
+    z-index: 1;
+    inset: 42% 0 0;
+    background: linear-gradient(transparent, rgba(43, 31, 22, 0.48));
     content: '';
     opacity: 0;
     pointer-events: none;
-    transition: opacity 200ms ease;
+    transition: opacity 220ms ease;
+}
+
+.dish-card__image-wrap--has-quantity::after {
+    opacity: 1;
 }
 
 .dish-card__image {
@@ -56,7 +62,7 @@
 
 .dish-card__badge {
     position: absolute;
-    z-index: 2;
+    z-index: 3;
     top: 12px;
     left: 12px;
     display: inline-flex;
@@ -79,59 +85,156 @@
     color: #a34c40;
 }
 
-.dish-card__image-add {
+/* Кнопка и счётчик занимают одно место поверх изображения. */
+.dish-card__image-actions {
     position: absolute;
-    z-index: 3;
+    z-index: 2;
     right: 14px;
     bottom: 14px;
     left: 14px;
-    display: inline-flex;
-    min-height: 44px;
+    height: 46px;
+}
+
+.dish-card__add-action,
+.dish-card__quantity {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    width: 100%;
+    height: 46px;
     align-items: center;
     justify-content: center;
+    border-radius: 12px;
+    transition:
+            opacity 200ms ease,
+            transform 240ms cubic-bezier(0.2, 0.75, 0.25, 1),
+            background-color 160ms ease,
+            visibility 0s linear 200ms;
+}
+
+/* Кнопка видна при наведении и не занимает дополнительное место. */
+.dish-card__add-action {
+    z-index: 1;
     gap: 8px;
     border: 1px solid rgba(255, 255, 255, 0.55);
-    border-radius: 12px;
     background: var(--color-orange);
     box-shadow: 0 4px 14px rgba(57, 40, 26, 0.18);
     color: #fff;
     font: inherit;
     font-weight: 700;
+    cursor: pointer;
     opacity: 0;
-    transform: translateY(8px);
+    visibility: hidden;
+    transform: translateY(7px);
     pointer-events: none;
-    transition:
-            opacity 180ms ease,
-            transform 180ms ease,
-            background 160ms ease;
 }
 
-.dish-card:hover .dish-card__image-wrap::after {
+.dish-card:hover .dish-card__add-action,
+.dish-card:focus-within .dish-card__add-action,
+.dish-card__add-action:focus-visible {
     opacity: 1;
-}
-
-.dish-card:hover .dish-card__image-add,
-.dish-card:focus-within .dish-card__image-add,
-.dish-card__image-add:focus-visible {
-    opacity: 1;
+    visibility: visible;
     transform: translateY(0);
     pointer-events: auto;
+    transition-delay: 0s;
 }
 
-.dish-card__image-add:hover {
+/* В состоянии «добавлено» кнопка остаётся скрытой и при наведении. */
+.dish-card:hover .dish-card__image-actions--added .dish-card__add-action,
+.dish-card:focus-within .dish-card__image-actions--added .dish-card__add-action,
+.dish-card__image-actions--added .dish-card__add-action {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-7px) scale(0.98);
+    pointer-events: none;
+    transition-delay: 0s, 0s, 0s, 200ms;
+}
+
+.dish-card__add-action:hover {
     background: var(--color-orange-dark);
 }
 
-.dish-card__image-add:active {
+.dish-card__add-action:active {
     transform: scale(0.98);
+}
+
+/* Счётчик скрыт, пока блюдо не добавлено. */
+.dish-card__quantity {
+    z-index: 2;
+    justify-content: space-between;
+    gap: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    padding: 3px;
+    background: rgba(255, 253, 249, 0.96);
+    box-shadow: 0 4px 14px rgba(57, 40, 26, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(7px) scale(0.97);
+    pointer-events: none;
+    backdrop-filter: blur(8px);
+}
+
+/* После добавления счётчик плавно появляется на месте кнопки. */
+.dish-card__image-actions--added .dish-card__quantity {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+    transition-delay: 0s;
+}
+
+.dish-card__quantity-button {
+    display: inline-flex;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #eadfd4;
+    border-radius: 9px;
+    background: #fff;
+    color: #493b30;
+    cursor: pointer;
+    transition:
+            background 160ms ease,
+            color 160ms ease,
+            transform 160ms ease;
+}
+
+.dish-card__quantity-button:hover {
+    background: #fff0df;
+    color: #9b5426;
+}
+
+.dish-card__quantity-button--plus {
+    border-color: var(--color-orange);
+    background: var(--color-orange);
+    color: #fff;
+}
+
+.dish-card__quantity-button--plus:hover {
+    background: var(--color-orange-dark);
+    color: #fff;
+}
+
+.dish-card__quantity-button:active {
+    transform: scale(0.94);
+}
+
+.dish-card__quantity-label {
+    flex: 1;
+    color: #493b30;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .dish-card__body {
     display: flex;
     flex: 0 0 auto;
     flex-direction: column;
-    gap: 12px;
-    padding: 16px;
+    padding: 14px 16px 16px;
 }
 
 .dish-card__details {
@@ -166,64 +269,30 @@
     font-size: 13px;
 }
 
-.dish-card__quantity {
-    display: flex;
-    min-height: 44px;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-}
-
-.dish-card__icon-button {
-    display: inline-flex;
-    width: 44px;
-    height: 44px;
-    flex: 0 0 44px;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--color-border);
-    border-radius: 11px;
-    background: #fff;
-    color: var(--color-ink);
-    transition:
-            background 160ms ease,
-            transform 160ms ease;
-}
-
-.dish-card__icon-button:hover {
-    background: #fff3e5;
-}
-
-.dish-card__icon-button--accent {
-    border-color: var(--color-orange);
-    background: var(--color-orange);
-    color: #fff;
-}
-
-.dish-card__icon-button--accent:hover {
-    background: var(--color-orange-dark);
-}
-
-.dish-card__icon-button:active {
-    transform: scale(0.97);
-}
-
-.dish-card__quantity-label {
-    color: var(--color-ink);
-    font-size: 13px;
-    font-weight: 700;
-    text-align: center;
-}
-
+/* На сенсорных экранах hover отсутствует, поэтому кнопка видна сразу. */
 @media (hover: none) {
-    .dish-card__image-wrap::after {
+    .dish-card__add-action {
         opacity: 1;
-    }
-
-    .dish-card__image-add {
-        opacity: 1;
+        visibility: visible;
         transform: none;
         pointer-events: auto;
+        transition-delay: 0s;
+    }
+
+    .dish-card__image-actions--added .dish-card__add-action {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-7px) scale(0.98);
+        pointer-events: none;
+        transition-delay: 0s, 0s, 0s, 200ms;
+    }
+
+    .dish-card__image-actions--added .dish-card__quantity {
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        pointer-events: auto;
+        transition-delay: 0s;
     }
 }
 
@@ -233,12 +302,17 @@
     }
 
     .dish-card__body {
-        gap: 10px;
-        padding: 14px;
+        padding: 12px 14px 14px;
     }
 
     .dish-card__name {
         font-size: 14px;
+    }
+
+    .dish-card__image-actions {
+        right: 10px;
+        bottom: 10px;
+        left: 10px;
     }
 }
 
@@ -246,7 +320,9 @@
     .dish-card,
     .dish-card__image,
     .dish-card__image-wrap::after,
-    .dish-card__image-add {
+    .dish-card__add-action,
+    .dish-card__quantity,
+    .dish-card__quantity-button {
         transition: none;
     }
 }

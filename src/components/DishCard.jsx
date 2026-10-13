@@ -4,9 +4,11 @@ import { money } from '@/utils/format.js';
 import '@/styles/dish-card.css';
 
 export default function DishCard({ dish, qty, stopped, offer, onAdd, onRemove }) {
+    const hasItems = qty > 0;
+
     return (
         <article className={`dish-card${stopped ? ' dish-card--unavailable' : ''}`}>
-            <div className="dish-card__image-wrap">
+            <div className={`dish-card__image-wrap${hasItems ? ' dish-card__image-wrap--has-quantity' : ''}`}>
                 <img
                     className="dish-card__image"
                     src={dish.image}
@@ -28,14 +30,46 @@ export default function DishCard({ dish, qty, stopped, offer, onAdd, onRemove })
           </span>
                 ) : null}
 
-                {!stopped && qty === 0 && (
-                    <button
-                        className="dish-card__image-add"
-                        type="button"
-                        onClick={onAdd}
-                    >
-                        Добавить
-                    </button>
+                {!stopped && (
+                    <div className={`dish-card__image-actions${hasItems ? ' dish-card__image-actions--added' : ''}`}>
+                        <button
+                            className="dish-card__add-action"
+                            type="button"
+                            onClick={onAdd}
+                            tabIndex={hasItems ? -1 : 0}
+                            aria-hidden={hasItems}
+                            aria-label={`Добавить ${dish.name} в корзину`}
+                        >
+                            <Plus size={17} aria-hidden="true" />
+                            Добавить
+                        </button>
+
+                        <div className="dish-card__quantity" aria-hidden={!hasItems}>
+                            <button
+                                className="dish-card__quantity-button"
+                                type="button"
+                                aria-label={`Убрать одну порцию: ${dish.name}`}
+                                onClick={onRemove}
+                                tabIndex={hasItems ? 0 : -1}
+                            >
+                                <Minus size={17} aria-hidden="true" />
+                            </button>
+
+                            <span className="dish-card__quantity-label" aria-live="polite">
+                {qty} в корзине
+              </span>
+
+                            <button
+                                className="dish-card__quantity-button dish-card__quantity-button--plus"
+                                type="button"
+                                aria-label={`Добавить порцию: ${dish.name}`}
+                                onClick={onAdd}
+                                tabIndex={hasItems ? 0 : -1}
+                            >
+                                <Plus size={17} aria-hidden="true" />
+                            </button>
+                        </div>
+                    </div>
                 )}
             </div>
 
@@ -50,32 +84,6 @@ export default function DishCard({ dish, qty, stopped, offer, onAdd, onRemove })
                         <span className="dish-card__weight">{dish.weight} г</span>
                     </div>
                 </div>
-
-                {!stopped && qty > 0 && (
-                    <div className="dish-card__quantity">
-                        <button
-                            className="dish-card__icon-button"
-                            type="button"
-                            aria-label={`Убрать одну порцию: ${dish.name}`}
-                            onClick={onRemove}
-                        >
-                            <Minus size={17} aria-hidden="true" />
-                        </button>
-
-                        <span className="dish-card__quantity-label" aria-live="polite">
-      {qty} в корзине
-    </span>
-
-                        <button
-                            className="dish-card__icon-button dish-card__icon-button--accent"
-                            type="button"
-                            aria-label={`Добавить порцию: ${dish.name}`}
-                            onClick={onAdd}
-                        >
-                            <Plus size={17} aria-hidden="true" />
-                        </button>
-                    </div>
-                )}
             </div>
         </article>
     );
