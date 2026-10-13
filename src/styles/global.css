@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:opsz,wght@17..18,400..700&display=swap');
+
+:root {
+    font-family: 'Google Sans', Arial, sans-serif;
+    color: #302821;
+    background: #fff8f1;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-size: 16px;
+    --color-ink: #302821;
+    --color-muted: #82766d;
+    --color-orange: #e66b18;
+    --color-orange-dark: #ce5c12;
+    --color-orange-soft: #fff0d8;
+    --color-border: #e7ddd4;
+    --color-paper: #ffffff;
+    --shadow-card: 0 4px 20px rgba(120, 80, 40, 0.08);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    min-width: 320px;
+    scroll-behavior: smooth;
+}
+
+body {
+    min-width: 320px;
+    min-height: 100vh;
+    margin: 0;
+    background: linear-gradient(135deg, #fff8f1 0%, #fbefe6 100%);
+}
+
+body,
+button,
+input,
+select,
+textarea {
+    font-family: 'Google Sans', Arial, sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+    font-size: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+button:disabled {
+    cursor: not-allowed;
+}
+
+a {
+    color: inherit;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+:focus-visible {
+    outline: 3px solid #df9968;
+    outline-offset: 3px;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}

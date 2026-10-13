@@ -1,17 +1,18 @@
-import { Center, Icon, Text, VStack } from '@chakra-ui/react';
-import { PackageOpen } from 'lucide-react';
 import PropTypes from 'prop-types';
+import { PackageOpen } from 'lucide-react';
+import '@/styles/components.css';
 
 export default function EmptyState({ title, text = 'Здесь пока ничего нет' }) {
     return (
-        <Center py="14">
-            <VStack spacing="3">
-                <Icon as={PackageOpen} boxSize="9" color="orange.300" />
-                <Text fontWeight="700">{title}</Text>
-                <Text color="gray.500" fontSize="sm">{text}</Text>
-            </VStack>
-        </Center>
+        <div className="empty-state">
+            <PackageOpen className="empty-state__icon" size={36} aria-hidden="true" />
+            <p className="empty-state__title">{title}</p>
+            <p className="empty-state__text">{text}</p>
+        </div>
     );
 }
 
-EmptyState.propTypes = { title: PropTypes.string.isRequired, text: PropTypes.string };
+EmptyState.propTypes = {
+    title: PropTypes.string.isRequired,
+    text: PropTypes.string,
+};

@@ -1,0 +1,258 @@
+.dish-card {
+    display: flex;
+    min-width: 0;
+    align-self: start;
+    overflow: hidden;
+    flex-direction: column;
+    border: 1px solid rgba(0, 0, 0, 0.045);
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: var(--shadow-card);
+    transition:
+            transform 200ms ease,
+            box-shadow 200ms ease;
+}
+
+.dish-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 9px 26px rgba(120, 80, 40, 0.13);
+}
+
+.dish-card--unavailable:hover {
+    transform: none;
+}
+
+.dish-card__image-wrap {
+    position: relative;
+    overflow: hidden;
+    background: #f2e8de;
+}
+
+.dish-card__image-wrap::after {
+    position: absolute;
+    inset: 45% 0 0;
+    background: linear-gradient(transparent, rgba(30, 20, 12, 0.38));
+    content: '';
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms ease;
+}
+
+.dish-card__image {
+    width: 100%;
+    height: 210px;
+    object-fit: cover;
+    transition: transform 300ms ease;
+}
+
+.dish-card__image-wrap:hover .dish-card__image {
+    transform: scale(1.035);
+}
+
+.dish-card--unavailable .dish-card__image {
+    filter: grayscale(1);
+    opacity: 0.55;
+}
+
+.dish-card__badge {
+    position: absolute;
+    z-index: 2;
+    top: 12px;
+    left: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: 999px;
+    padding: 5px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.dish-card__badge--recommended {
+    background: #fff0d8;
+    color: #9b4d24;
+}
+
+.dish-card__badge--unavailable {
+    background: #ffe4e4;
+    color: #a93434;
+}
+
+.dish-card__image-add {
+    position: absolute;
+    z-index: 3;
+    right: 14px;
+    bottom: 14px;
+    left: 14px;
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    border-radius: 12px;
+    background: #e66b18;
+    box-shadow: 0 4px 14px rgba(57, 32, 15, 0.2);
+    color: #fff;
+    font: inherit;
+    font-weight: 700;
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+    transition:
+            opacity 180ms ease,
+            transform 180ms ease,
+            background 160ms ease;
+}
+
+.dish-card:hover .dish-card__image-wrap::after {
+    opacity: 1;
+}
+
+.dish-card:hover .dish-card__image-add,
+.dish-card:focus-within .dish-card__image-add,
+.dish-card__image-add:focus-visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.dish-card__image-add:hover {
+    background: #ce5c12;
+}
+
+.dish-card__image-add:active {
+    transform: scale(0.98);
+}
+
+.dish-card__body {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+}
+
+.dish-card__details {
+    display: grid;
+    gap: 4px;
+}
+
+.dish-card__name {
+    overflow: hidden;
+    margin: 0;
+    color: #302821;
+    font-size: 16px;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dish-card__price-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.dish-card__price {
+    color: #98451f;
+    font-weight: 700;
+}
+
+.dish-card__weight {
+    color: #82766d;
+    font-size: 13px;
+}
+
+.dish-card__unavailable-note {
+    color: #a93434;
+    font-size: 13px;
+}
+
+.dish-card__quantity {
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.dish-card__icon-button {
+    display: inline-flex;
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e2e8f0;
+    border-radius: 11px;
+    background: #fff;
+    color: #302821;
+    transition:
+            background 160ms ease,
+            transform 160ms ease;
+}
+
+.dish-card__icon-button:hover {
+    background: #fff4eb;
+}
+
+.dish-card__icon-button--accent {
+    border-color: #e66b18;
+    background: #e66b18;
+    color: #fff;
+}
+
+.dish-card__icon-button--accent:hover {
+    background: #ce5c12;
+}
+
+.dish-card__icon-button:active {
+    transform: scale(0.97);
+}
+
+.dish-card__quantity-label {
+    color: #302821;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+}
+
+/* На телефонах нет наведения, поэтому кнопка доступна постоянно. */
+@media (hover: none) {
+    .dish-card__image-wrap::after {
+        opacity: 1;
+    }
+
+    .dish-card__image-add {
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
+    }
+}
+
+@media (max-width: 700px) {
+    .dish-card__image {
+        height: 190px;
+    }
+
+    .dish-card__body {
+        gap: 10px;
+        padding: 14px;
+    }
+
+    .dish-card__name {
+        font-size: 14px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dish-card,
+    .dish-card__image,
+    .dish-card__image-wrap::after,
+    .dish-card__image-add {
+        transition: none;
+    }
+}

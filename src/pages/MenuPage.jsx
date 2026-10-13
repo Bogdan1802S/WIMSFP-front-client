@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
-import { Badge, Box, Button, HStack, SimpleGrid, Text, VStack } from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
+import { Badge } from '@chakra-ui/react';
+import { Flame } from 'lucide-react';
 import { categories, dishes } from '@/data/dishes.js';
 import { products } from '@/data/products.js';
 import DishCard from '@/components/DishCard.jsx';
@@ -11,7 +11,7 @@ import { computeStopList } from '@/domain/stoplist.js';
 import { useCartStore } from '@/store/cartStore.js';
 import { useInventoryStore } from '@/store/inventoryStore.js';
 import { useUiStore } from '@/store/uiStore.js';
-import { Flame } from 'lucide-react';
+import '@/styles/menu.css';
 
 export default function MenuPage() {
     const [category, setCategory] = useState('Все');
@@ -28,7 +28,10 @@ export default function MenuPage() {
         [batches, stopList],
     );
 
-    const stoppedIds = useMemo(() => new Set(stopList.map((item) => item.dishId)), [stopList]);
+    const stoppedIds = useMemo(
+        () => new Set(stopList.map((item) => item.dishId)),
+        [stopList],
+    );
     const offerMap = useMemo(
         () => new Map(offers.map((offer) => [offer.dishId, offer])),
         [offers],
@@ -38,13 +41,11 @@ export default function MenuPage() {
         const normalizedSearch = debouncedSearch.trim().toLowerCase();
 
         return dishes.filter((dish) => {
-            const categoryMap = {
-                'Основные блюда': 'Горячее',
-            };
-
+            const categoryMap = { 'Основные блюда': 'Горячее' };
             const matchesCategory =
                 category === 'Все' || dish.category === (categoryMap[category] || category);
             const matchesSearch = dish.name.toLowerCase().includes(normalizedSearch);
+
             return matchesCategory && matchesSearch;
         });
     }, [category, debouncedSearch]);
@@ -58,76 +59,61 @@ export default function MenuPage() {
         [offers],
     );
 
+    const showRecommendations =
+        !search.trim() && category === 'Все' && recommendedDishes.length > 0;
+
+    const scrollToMenu = () => {
+        const target =
+            document.getElementById('recommendations-section') ||
+            document.getElementById('menu-section');
+
+        target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
     return (
-        <VStack align="stretch" spacing={{ base: 6, md: 8 }}>
-            <Box
-                p={{ base: 6, md: 9 }}
-                borderRadius="24px"
-                bg="linear-gradient(120deg, #f7e5d4, #fff3e6)"
-            >
-                <Badge colorScheme="orange" borderRadius="full" px="3" py="1" mb="3">
+        <div className="menu-page">
+            <section className="menu-hero">
+                <Badge className="menu-hero__eyebrow">
                     Домашняя кухня · готовим с любовью
                 </Badge>
-                <Text
-                    as="h1"
-                    fontFamily="heading"
-                    fontSize={{ base: '3xl', md: '5xl' }}
-                    fontWeight="700"
-                    lineHeight="1.1"
-                >
+                <h1 className="menu-hero__title">
                     Что сегодня
                     <br />
                     будет вкусного?
-                </Text>
-                <Text mt="3" color="gray.600" maxW="560px">
+                </h1>
+                <p className="menu-hero__description">
                     Выберите любимые блюда — мы приготовим их свежими и бережно упакуем.
-                </Text>
-                <Button
-                    mt="5"
-                    colorScheme="orange"
-                    borderRadius="full"
-                    onClick={() => {
-                        const target =
-                            document.getElementById('recommendations-section') ||
-                            document.getElementById('menu-section');
-
-                        target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }}
-                >
+                </p>
+                <button className="menu-hero__button" type="button" onClick={scrollToMenu}>
                     Смотреть меню
-                </Button>
-            </Box>
+                </button>
+            </section>
 
-            {!search.trim() && category === 'Все' && recommendedDishes.length > 0 && (
-                <Box id="recommendations-section" scrollMarginTop="24px">
-                    <HStack justify="space-between" mb="4">
-                        <Box>
-                            <Text fontFamily="heading" fontSize="2xl" fontWeight="700">
+            {showRecommendations && (
+                <section
+                    className="menu-section"
+                    id="recommendations-section"
+                    aria-labelledby="recommendations-title"
+                >
+                    <div className="menu-section__heading">
+                        <div>
+                            <h2 className="menu-section__title" id="recommendations-title">
                                 Сегодня рекомендуем
-                            </Text>
-                            <Text color="gray.500" fontSize="sm">
+                            </h2>
+                            <p className="menu-section__subtitle">
                                 Вкусные блюда, которые особенно хороши сегодня
-                            </Text>
-                        </Box>
-                        <Badge
-                            display="inline-flex"
-                            alignItems="center"
-                            gap="1.5"
-                            color="#9b4d24"
-                            bg="#fff0d8"
-                            borderRadius="full"
-                            px="3"
-                            py="1.5"
-                            fontSize="xs"
-                            letterSpacing="0.04em"
-                        >
-                            <Flame size={14} strokeWidth={1.8} />
-                            ВЫБОР ДНЯ
-                        </Badge>
-                    </HStack>
-                    <SimpleGrid columns={{ base: 1, sm: 2, xl: 3 }} spacing="5">
+                            </p>
+                        </div>
+                        <span className="day-pick">
+              <Flame size={14} strokeWidth={1.8} aria-hidden="true" />
+              ВЫБОР ДНЯ
+            </span>
+                    </div>
+
+                    <div className="dish-grid dish-grid--featured">
                         {recommendedDishes.map((dish) => {
                             const qty = items.find((item) => item.dishId === dish.id)?.qty || 0;
+
                             return (
                                 <DishCard
                                     key={`recommended-${dish.id}`}
@@ -139,33 +125,31 @@ export default function MenuPage() {
                                 />
                             );
                         })}
-                    </SimpleGrid>
-                </Box>
+                    </div>
+                </section>
             )}
 
-            <Box id="menu-section" scrollMarginTop="24px">
-                <Text fontFamily="heading" fontSize="2xl" fontWeight="700" mb="4">
+            <section className="menu-section" id="menu-section" aria-labelledby="menu-title">
+                <h2 className="menu-section__title menu-section__title--menu" id="menu-title">
                     Меню
-                </Text>
+                </h2>
 
-                <HStack spacing="2" overflowX="auto" pb="3" mb="3">
+                <div className="category-list" role="group" aria-label="Категории меню">
                     {categories.map((item) => (
-                        <Button
+                        <button
                             key={item}
-                            flexShrink={0}
-                            size="sm"
-                            borderRadius="full"
-                            colorScheme={category === item ? 'orange' : 'gray'}
-                            variant={category === item ? 'solid' : 'outline'}
+                            className={`category-button${category === item ? ' category-button--active' : ''}`}
+                            type="button"
+                            aria-pressed={category === item}
                             onClick={() => setCategory(item)}
                         >
                             {item}
-                        </Button>
+                        </button>
                     ))}
-                </HStack>
+                </div>
 
                 {filteredDishes.length ? (
-                    <SimpleGrid columns={{ base: 1, sm: 2, lg: 3 }} spacing="5">
+                    <div className="dish-grid">
                         {filteredDishes.map((dish) => {
                             const qty = items.find((item) => item.dishId === dish.id)?.qty || 0;
                             const stopped = stoppedIds.has(dish.id);
@@ -182,11 +166,14 @@ export default function MenuPage() {
                                 />
                             );
                         })}
-                    </SimpleGrid>
+                    </div>
                 ) : (
-                    <EmptyState title="Блюда не найдены" text="Попробуйте изменить поисковый запрос" />
+                    <EmptyState
+                        title="Блюда не найдены"
+                        text="Попробуйте изменить поисковый запрос или категорию"
+                    />
                 )}
-            </Box>
-        </VStack>
+            </section>
+        </div>
     );
 }

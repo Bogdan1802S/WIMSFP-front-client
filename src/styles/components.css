@@ -1,0 +1,25 @@
+.empty-state {
+    display: grid;
+    min-height: 220px;
+    align-content: center;
+    justify-items: center;
+    gap: 10px;
+    padding: 32px 16px;
+    text-align: center;
+}
+
+.empty-state__icon {
+    color: #e6a475;
+}
+
+.empty-state__title {
+    margin: 0;
+    color: #302821;
+    font-weight: 700;
+}
+
+.empty-state__text {
+    margin: 0;
+    color: #82766d;
+    font-size: 14px;
+}

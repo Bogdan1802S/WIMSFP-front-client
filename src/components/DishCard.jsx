@@ -1,117 +1,83 @@
-import {
-    Badge,
-    Box,
-    Button,
-    Card,
-    CardBody,
-    HStack,
-    Image,
-    Text,
-    VStack,
-} from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import { money } from '@/utils/format.js';
 import { Flame, Minus, Plus } from 'lucide-react';
+import { money } from '@/utils/format.js';
+import '@/styles/dish-card.css';
 
 export default function DishCard({ dish, qty, stopped, offer, onAdd, onRemove }) {
     return (
-        <Card
-            overflow="hidden"
-            bg="white"
-            border="1px solid"
-            borderColor="blackAlpha.50"
-            boxShadow="0 4px 20px rgba(120,80,40,.08)"
-            transition="transform .2s, box-shadow .2s"
-            _hover={!stopped ? { transform: 'translateY(-2px)', boxShadow: 'lg' } : undefined}
-        >
-            <Box position="relative">
-                <Image
+        <article className={`dish-card${stopped ? ' dish-card--unavailable' : ''}`}>
+            <div className="dish-card__image-wrap">
+                <img
+                    className="dish-card__image"
                     src={dish.image}
                     alt={dish.name}
-                    w="100%"
-                    h={{ base: '190px', md: '210px' }}
-                    objectFit="cover"
-                    filter={stopped ? 'grayscale(1)' : 'none'}
-                    opacity={stopped ? 0.55 : 1}
+                    loading="lazy"
                 />
+
                 {stopped ? (
-                    <Badge position="absolute" top="3" left="3" colorScheme="red" borderRadius="full" px="3">
-                        Временно недоступно
-                    </Badge>
+                    <span className="dish-card__badge dish-card__badge--unavailable">
+            Временно недоступно
+          </span>
                 ) : offer ? (
-                    <Badge
-                        position="absolute"
-                        top="3"
-                        left="3"
-                        display="inline-flex"
-                        alignItems="center"
-                        gap="1"
-                        color="#9b4d24"
-                        bg="#fff0d8"
-                        borderRadius="full"
-                        px="3"
-                        py="1"
+                    <span
+                        className="dish-card__badge dish-card__badge--recommended"
                         title={offer.reasons.join('. ')}
                     >
-                        <Flame size={13} strokeWidth={1.8} />
-                        Рекомендуем
-                    </Badge>
+            <Flame size={13} strokeWidth={1.8} aria-hidden="true" />
+            Рекомендуем
+          </span>
                 ) : null}
-            </Box>
 
-            <CardBody>
-                <VStack align="stretch" spacing="4">
-                    <VStack align="stretch" spacing="0.2">
-                        <Text fontWeight="700" noOfLines={1}>
-                            {dish.name}
-                        </Text>
+                {!stopped && qty === 0 && (
+                    <button
+                        className="dish-card__image-add"
+                        type="button"
+                        onClick={onAdd}
+                    >
+                        Добавить
+                    </button>
+                )}
+            </div>
 
-                        <HStack justify="space-between">
-                            <Text fontWeight="700" color="brand.600">
-                                {money(dish.price)}
-                            </Text>
-                            <Text color="gray.500" fontSize="sm">
-                                {dish.weight} г
-                            </Text>
-                        </HStack>
-                    </VStack>
+            <div className="dish-card__body">
+                <div className="dish-card__details">
+                    <h3 className="dish-card__name" title={dish.name}>
+                        {dish.name}
+                    </h3>
 
-                    {stopped ? (
-                        <Button isDisabled w="full" variant="outline">
-                            Временно недоступно
-                        </Button>
-                    ) : qty > 0 ? (
-                        <HStack justify="space-between">
-                            <Button
-                                aria-label={`Убрать одну порцию: ${dish.name}`}
-                                variant="outline"
-                                onClick={onRemove}
-                            >
-                                <Minus size={17} />
-                            </Button>
+                    <div className="dish-card__price-row">
+                        <span className="dish-card__price">{money(dish.price)}</span>
+                        <span className="dish-card__weight">{dish.weight} г</span>
+                    </div>
+                </div>
 
-                            <Text fontWeight="700">{qty} в корзине</Text>
+                {!stopped && qty > 0 && (
+                    <div className="dish-card__quantity">
+                        <button
+                            className="dish-card__icon-button"
+                            type="button"
+                            aria-label={`Убрать одну порцию: ${dish.name}`}
+                            onClick={onRemove}
+                        >
+                            <Minus size={17} aria-hidden="true" />
+                        </button>
 
-                            <Button
-                                aria-label={`Добавить порцию: ${dish.name}`}
-                                colorScheme="orange"
-                                onClick={onAdd}
-                            >
-                                <Plus size={17} />
-                            </Button>
-                        </HStack>
-                    ) : (
-                        <Button
-                            w="full"
-                            colorScheme="orange"
+                        <span className="dish-card__quantity-label" aria-live="polite">
+      {qty} в корзине
+    </span>
+
+                        <button
+                            className="dish-card__icon-button dish-card__icon-button--accent"
+                            type="button"
+                            aria-label={`Добавить порцию: ${dish.name}`}
                             onClick={onAdd}
                         >
-                            Добавить
-                        </Button>
-                    )}
-                </VStack>
-            </CardBody>
-        </Card>
+                            <Plus size={17} aria-hidden="true" />
+                        </button>
+                    </div>
+                )}
+            </div>
+        </article>
     );
 }
 
