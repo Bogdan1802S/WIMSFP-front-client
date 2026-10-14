@@ -8,7 +8,11 @@ export default function DishCard({ dish, qty, stopped, offer, onAdd, onRemove })
 
     return (
         <article className={`dish-card${stopped ? ' dish-card--unavailable' : ''}`}>
-            <div className={`dish-card__image-wrap${hasItems ? ' dish-card__image-wrap--has-quantity' : ''}`}>
+            <div
+                className={`dish-card__image-wrap${
+                    hasItems ? ' dish-card__image-wrap--has-quantity' : ''
+                }`}
+            >
                 <img
                     className="dish-card__image"
                     src={dish.image}
@@ -31,7 +35,11 @@ export default function DishCard({ dish, qty, stopped, offer, onAdd, onRemove })
                 ) : null}
 
                 {!stopped && (
-                    <div className={`dish-card__image-actions${hasItems ? ' dish-card__image-actions--added' : ''}`}>
+                    <div
+                        className={`dish-card__image-actions${
+                            hasItems ? ' dish-card__image-actions--added' : ''
+                        }`}
+                    >
                         <button
                             className="dish-card__add-action"
                             type="button"
@@ -40,6 +48,7 @@ export default function DishCard({ dish, qty, stopped, offer, onAdd, onRemove })
                             aria-hidden={hasItems}
                             aria-label={`Добавить ${dish.name} в корзину`}
                         >
+                            <Plus size={17} strokeWidth={2.2} aria-hidden="true" />
                             Добавить
                         </button>
 

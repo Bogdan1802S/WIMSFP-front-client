@@ -85,7 +85,6 @@
     color: #a34c40;
 }
 
-/* Кнопка и счётчик занимают одно место поверх изображения. */
 .dish-card__image-actions {
     position: absolute;
     z-index: 2;
@@ -112,13 +111,15 @@
             visibility 0s linear 200ms;
 }
 
-/* Кнопка видна при наведении и не занимает дополнительное место. */
 .dish-card__add-action {
     z-index: 1;
     gap: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.55);
-    background: var(--color-orange);
-    box-shadow: 0 4px 14px rgba(57, 40, 26, 0.18);
+    border: 0;
+    padding: 0 18px;
+    background: linear-gradient(135deg, #e47a25 0%, #d9681d 100%);
+    box-shadow:
+            0 5px 14px rgba(95, 49, 18, 0.24),
+            0 1px 3px rgba(95, 49, 18, 0.16);
     color: #fff;
     font: inherit;
     font-weight: 700;
@@ -127,6 +128,7 @@
     visibility: hidden;
     transform: translateY(7px);
     pointer-events: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .dish-card:hover .dish-card__add-action,
@@ -139,10 +141,14 @@
     transition-delay: 0s;
 }
 
-/* В состоянии «добавлено» кнопка остаётся скрытой и при наведении. */
-.dish-card:hover .dish-card__image-actions--added .dish-card__add-action,
-.dish-card:focus-within .dish-card__image-actions--added .dish-card__add-action,
-.dish-card__image-actions--added .dish-card__add-action {
+.dish-card:hover
+.dish-card__image-actions--added
+.dish-card__add-action,
+.dish-card:focus-within
+.dish-card__image-actions--added
+.dish-card__add-action,
+.dish-card__image-actions--added
+.dish-card__add-action {
     opacity: 0;
     visibility: hidden;
     transform: translateY(-7px) scale(0.98);
@@ -151,14 +157,17 @@
 }
 
 .dish-card__add-action:hover {
-    background: var(--color-orange-dark);
+    background: linear-gradient(135deg, #ed842f 0%, #df7122 100%);
+    box-shadow:
+            0 7px 18px rgba(95, 49, 18, 0.29),
+            0 2px 4px rgba(95, 49, 18, 0.18);
 }
 
 .dish-card__add-action:active {
     transform: scale(0.98);
+    box-shadow: 0 2px 7px rgba(95, 49, 18, 0.2);
 }
 
-/* Счётчик скрыт, пока блюдо не добавлено. */
 .dish-card__quantity {
     z-index: 2;
     justify-content: space-between;
@@ -174,7 +183,6 @@
     backdrop-filter: blur(8px);
 }
 
-/* После добавления счётчик плавно появляется на месте кнопки. */
 .dish-card__image-actions--added .dish-card__quantity {
     opacity: 1;
     visibility: visible;
@@ -269,7 +277,6 @@
     font-size: 13px;
 }
 
-/* На сенсорных экранах hover отсутствует, поэтому кнопка видна сразу. */
 @media (hover: none) {
     .dish-card__add-action {
         opacity: 1;
