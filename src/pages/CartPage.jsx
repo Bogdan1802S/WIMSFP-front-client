@@ -233,15 +233,16 @@ export default function CartPage() {
         }
 
         const orderBody = {
+            customerName: customerName.trim(),
+            contactPhone: phone.trim(),
+            format: fulfillment === 'В ресторане' ? 1 : 0,
+            comment: comment?.trim() || '',
             created: new Date().toISOString(),
-            payment: total,
-            status: 0,
             dishes: cart.map((item) => {
                 const dish = dishById.get(item.dishId);
 
                 return {
                     dishName: dish.name,
-                    dishPrice: dish.price,
                     count: item.qty,
                 };
             }),
