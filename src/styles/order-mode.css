@@ -1,0 +1,121 @@
+.fulfillment-panel {
+    display: flex;
+    width: min(100% - 40px, 1280px);
+    justify-content: center;
+    margin: 12px auto 0;
+    border: 1px solid rgba(104, 78, 55, 0.07);
+    border-radius: 16px;
+    padding: 10px 14px;
+    background: rgba(255, 253, 250, 0.82);
+}
+
+.fulfillment-switch {
+    position: relative;
+    display: grid;
+    width: min(100%, 340px);
+    min-height: 40px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+    border: 1px solid #eee3d8;
+    border-radius: 14px;
+    padding: 3px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(92, 65, 42, 0.04);
+    isolation: isolate;
+}
+
+.fulfillment-switch__indicator {
+    position: absolute;
+    z-index: 0;
+    top: 3px;
+    bottom: 3px;
+    left: 3px;
+    width: calc((100% - 10px) / 2);
+    border-radius: 10px;
+    background: var(--color-orange);
+    box-shadow: 0 3px 8px rgba(153, 90, 39, 0.15);
+    transform: translateX(0);
+    transition:
+            transform 360ms cubic-bezier(0.22, 1, 0.36, 1),
+            background-color 180ms ease;
+    pointer-events: none;
+}
+
+.fulfillment-switch--restaurant .fulfillment-switch__indicator {
+    transform: translateX(calc(100% + 4px));
+}
+
+.fulfillment-switch__option {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    min-width: 0;
+    min-height: 32px;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 10px;
+    padding: 5px 12px;
+    background: transparent;
+    color: #74685d;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color 180ms ease;
+}
+
+.fulfillment-switch__option:hover:not(
+    .fulfillment-switch__option--active
+  ) {
+    color: #995323;
+}
+
+.fulfillment-switch__option--active {
+    background: transparent;
+    color: #fff;
+}
+
+.fulfillment-switch__option:focus-visible {
+    outline: 2px solid #9b5426;
+    outline-offset: 2px;
+}
+
+.fulfillment-switch__option:active {
+    transform: scale(0.98);
+}
+
+@media (max-width: 700px) {
+    .fulfillment-panel {
+        width: calc(100% - 24px);
+        margin-top: 9px;
+        border-radius: 14px;
+        padding: 7px;
+    }
+
+    .fulfillment-switch {
+        width: min(100%, 380px);
+        min-height: 40px;
+        gap: 3px;
+        border-radius: 13px;
+        padding: 3px;
+    }
+
+    .fulfillment-switch__indicator {
+        border-radius: 10px;
+    }
+
+    .fulfillment-switch__option {
+        min-height: 32px;
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fulfillment-switch__indicator,
+    .fulfillment-switch__option {
+        transition: none;
+    }
+}

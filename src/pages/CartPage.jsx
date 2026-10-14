@@ -10,6 +10,7 @@ import { useInventoryStore } from '@/store/inventoryStore.js';
 import { money, quantity } from '@/utils/format.js';
 import EmptyState from '@/components/EmptyState.jsx';
 import '@/styles/cart.css';
+import { useUiStore } from '@/store/uiStore.js';
 
 function formatRussianPhone(value) {
     let digits = value.replace(/\D/g, '').slice(0, 11);
@@ -44,7 +45,8 @@ export default function CartPage() {
     const [customerName, setCustomerName] = useState('');
     const [phone, setPhone] = useState('');
     const phoneInputRef = useRef(null);
-    const [fulfillment, setFulfillment] = useState('Самовывоз');
+    const fulfillment = useUiStore((state) => state.fulfillment);
+    const setFulfillment = useUiStore((state) => state.setFulfillment);
     const [confirmation, setConfirmation] = useState('');
     const [modalOpen, setModalOpen] = useState(false);
 

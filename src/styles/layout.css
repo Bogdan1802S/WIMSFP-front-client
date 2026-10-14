@@ -7,22 +7,24 @@
     z-index: 20;
     top: 0;
     border-bottom: 1px solid rgba(104, 78, 55, 0.09);
-    background: rgba(255, 250, 244, 0.96);
+    background: rgba(255, 250, 244, 0.97);
     backdrop-filter: blur(14px);
 }
 
 .site-header__inner {
-    display: flex;
+    display: grid;
     width: min(100% - 40px, 1280px);
-    min-height: 58px;
+    min-height: 68px;
+    grid-template-columns: 170px 300px minmax(0, 1fr);
     align-items: center;
-    gap: 18px;
+    gap: 12px;
     margin: 0 auto;
 }
 
 .brand {
     display: inline-flex;
-    flex: 0 0 auto;
+    width: fit-content;
+    min-width: 0;
     align-items: center;
     gap: 9px;
     text-decoration: none;
@@ -32,6 +34,7 @@
     display: grid;
     width: 36px;
     height: 36px;
+    flex: 0 0 36px;
     place-items: center;
     border-radius: 13px;
     background: #f4d2b5;
@@ -55,11 +58,18 @@
     font-size: 11px;
 }
 
+.site-header__actions {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    justify-self: end;
+    gap: 10px;
+}
+
 .desktop-nav {
     display: flex;
     align-items: center;
     gap: 5px;
-    margin-left: auto;
 }
 
 .nav-link,
@@ -101,6 +111,7 @@
     font-size: 14px;
     font-weight: 700;
     text-decoration: none;
+    white-space: nowrap;
     transition:
             background 180ms ease,
             transform 180ms ease;
@@ -115,6 +126,7 @@
     display: none;
     width: 40px;
     height: 40px;
+    flex: 0 0 40px;
     align-items: center;
     justify-content: center;
     border: 1px solid var(--color-border);
@@ -127,36 +139,114 @@
     display: none;
 }
 
+/* Селектор адреса в верхней панели. */
+.venue-picker {
+    position: relative;
+    display: flex;
+    width: 100%;
+    max-width: 300px;
+    min-width: 0;
+    min-height: 42px;
+    align-items: center;
+    justify-self: start;
+    gap: 9px;
+    border: 1px solid #eee3d8;
+    border-radius: 13px;
+    padding: 0 12px;
+    background: #fff;
+    color: #8b7662;
+    transition:
+            border-color 160ms ease,
+            box-shadow 160ms ease,
+            background 160ms ease;
+}
+
+.venue-picker:hover {
+    border-color: #e4c3a3;
+    background: #fffdfa;
+}
+
+.venue-picker:focus-within {
+    border-color: #dda875;
+    box-shadow: 0 0 0 3px rgba(221, 168, 117, 0.13);
+}
+
+.venue-picker__icon {
+    flex: 0 0 auto;
+    color: #b97743;
+}
+
+.venue-picker select {
+    width: 100%;
+    min-width: 0;
+    height: 40px;
+    appearance: none;
+    border: 0;
+    outline: 0;
+    padding: 0 20px 0 0;
+    background: transparent;
+    color: #4d4035;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-overflow: ellipsis;
+}
+
+.venue-picker select:disabled {
+    color: #95897e;
+    cursor: not-allowed;
+}
+
+.venue-picker__chevron {
+    position: absolute;
+    right: 12px;
+    flex: 0 0 auto;
+    color: #95897e;
+    pointer-events: none;
+}
+
+/* Поиск блюд в меню. */
 .site-search {
     display: flex;
     width: min(100%, 430px);
-    height: 40px;
+    min-height: 44px;
     align-items: center;
     gap: 10px;
     margin: 0 auto;
-    padding: 0 13px;
     border: 1px solid #e9e1d8;
     border-radius: 999px;
+    padding: 0 15px;
     background: #fff;
     color: #95897e;
     transition:
             border-color 160ms ease,
-            box-shadow 160ms ease;
+            box-shadow 160ms ease,
+            background 160ms ease;
 }
 
 .site-search:focus-within {
     border-color: #dda875;
+    background: #fff;
     box-shadow: 0 0 0 3px rgba(221, 168, 117, 0.13);
+}
+
+.site-search > svg {
+    flex: 0 0 auto;
+    color: #95897e;
 }
 
 .site-search input {
     width: 100%;
     min-width: 0;
+    min-height: 40px;
     border: 0;
     outline: 0;
+    padding: 0;
     background: transparent;
     color: var(--color-ink);
-    font-size: 14px;
+    font: inherit;
+    font-size: 15px;
 }
 
 .site-search input:focus-visible {
@@ -164,37 +254,71 @@
 }
 
 .site-search input::placeholder {
-    color: #958a80;
+    color: #9a958f;
+    opacity: 1;
+}
+
+.site-search input::-webkit-search-cancel-button {
+    cursor: pointer;
 }
 
 .site-main {
     width: min(100% - 40px, 1280px);
-    min-height: calc(100vh - 130px);
+    min-height: calc(100vh - 170px);
     margin: 0 auto;
     padding: 26px 0 42px;
 }
 
-.site-footer {
-    padding: 22px 16px;
-    color: var(--color-muted);
-    font-size: 13px;
-    text-align: center;
+@media (max-width: 900px) {
+    .site-header__inner {
+        width: min(100% - 32px, 1280px);
+        grid-template-columns: 150px minmax(220px, 280px) minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    .venue-picker {
+        max-width: 280px;
+    }
+
+    .site-header__actions {
+        gap: 6px;
+    }
+
+    .nav-link {
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+
+    .cart-link {
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+
+    .venue-picker select {
+        font-size: 12px;
+    }
 }
 
 @media (max-width: 700px) {
     .site-header__inner {
         width: calc(100% - 24px);
-        min-height: 56px;
-        gap: 8px;
+        min-height: 100px;
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-rows: 52px 42px;
+        gap: 4px 10px;
+        padding: 4px 0 7px;
     }
 
     .brand {
+        grid-column: 1;
+        grid-row: 1;
         gap: 7px;
     }
 
     .brand__mark {
         width: 34px;
         height: 34px;
+        flex-basis: 34px;
     }
 
     .brand__name {
@@ -205,6 +329,26 @@
         font-size: 10px;
     }
 
+    .venue-picker {
+        width: 100%;
+        max-width: none;
+        min-height: 40px;
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
+
+    .venue-picker select {
+        height: 38px;
+        font-size: 12px;
+    }
+
+    .site-header__actions {
+        grid-column: 2;
+        grid-row: 1;
+        justify-self: end;
+        gap: 7px;
+    }
+
     .desktop-nav {
         display: none;
     }
@@ -212,7 +356,6 @@
     .cart-link {
         min-height: 38px;
         gap: 5px;
-        margin-left: auto;
         padding: 0 11px;
         font-size: 13px;
     }
@@ -235,7 +378,37 @@
 
     .site-main {
         width: calc(100% - 24px);
-        min-height: calc(100vh - 126px);
+        min-height: calc(100vh - 195px);
         padding: 16px 0 30px;
+    }
+}
+
+@media (max-width: 360px) {
+    .site-header__inner {
+        width: calc(100% - 16px);
+        column-gap: 6px;
+    }
+
+    .brand__name {
+        font-size: 12px;
+    }
+
+    .brand__caption {
+        font-size: 9px;
+    }
+
+    .cart-link {
+        padding: 0 9px;
+        font-size: 12px;
+    }
+
+    .mobile-menu-button {
+        width: 36px;
+        height: 36px;
+        flex-basis: 36px;
+    }
+
+    .site-main {
+        width: calc(100% - 20px);
     }
 }

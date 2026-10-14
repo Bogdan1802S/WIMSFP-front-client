@@ -6,9 +6,23 @@ export const useUiStore = create(
         (set) => ({
             simulation: true,
             search: '',
+            fulfillment: 'Самовывоз',
+            selectedVenueId: '',
+
             setSearch: (search) => set({ search }),
-            toggleSimulation: () => set((state) => ({ simulation: !state.simulation })),
-            reset: () => set({ simulation: true, search: '' }),
+            setFulfillment: (fulfillment) => set({ fulfillment }),
+            setSelectedVenueId: (selectedVenueId) => set({ selectedVenueId }),
+
+            toggleSimulation: () =>
+                set((state) => ({ simulation: !state.simulation })),
+
+            reset: () =>
+                set({
+                    simulation: true,
+                    search: '',
+                    fulfillment: 'Самовывоз',
+                    selectedVenueId: '',
+                }),
         }),
         { name: 'restaurant-pos-ui' },
     ),
