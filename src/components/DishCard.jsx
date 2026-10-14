@@ -89,7 +89,9 @@ export default function DishCard({ dish, qty, stopped, offer, onAdd, onRemove })
 
                     <div className="dish-card__price-row">
                         <span className="dish-card__price">{money(dish.price)}</span>
-                        <span className="dish-card__weight">{dish.weight} г</span>
+                        {dish.weight != null && (
+                            <span className="dish-card__weight">{dish.weight} г</span>
+                        )}
                     </div>
                 </div>
             </div>

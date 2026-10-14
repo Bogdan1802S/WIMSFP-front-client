@@ -5,4 +5,12 @@ import path from 'node:path';
 export default defineConfig({
   plugins: [react()],
   resolve: { alias: { '@': path.resolve(process.cwd(), 'src') } },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5094',
+        changeOrigin: true,
+      },
+    },
+  },
 });

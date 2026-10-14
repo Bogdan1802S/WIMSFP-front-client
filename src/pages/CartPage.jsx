@@ -1,16 +1,12 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Trash2, X } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { dishes } from '@/data/dishes.js';
-import { products } from '@/data/products.js';
-import { checkCart, maxCartDishQuantity } from '@/domain/availability.js';
 import { useCartStore } from '@/store/cartStore.js';
-import { useInventoryStore } from '@/store/inventoryStore.js';
-import { money, quantity } from '@/utils/format.js';
+import { useUiStore } from '@/store/uiStore.js';
+import { money } from '@/utils/format.js';
 import EmptyState from '@/components/EmptyState.jsx';
 import '@/styles/cart.css';
-import { useUiStore } from '@/store/uiStore.js';
 
 function formatRussianPhone(value) {
     let digits = value.replace(/\D/g, '').slice(0, 11);
@@ -33,30 +29,112 @@ function formatRussianPhone(value) {
     return formatted;
 }
 
+function mapMenuGroup(group, menuGroup) {
+    if (!Array.isArray(group)) return [];
+
+    return group
+        .filter((dish) => dish && typeof dish.name === 'string')
+        .map((dish) => ({
+            id: dish.name,
+            name: dish.name,
+            price: Number(dish.price) || 0,
+            image: dish.imageUrl || '',
+            menuGroup,
+        }));
+}
+
+async function getResponseMessage(response) {
+    const text = await response.text();
+
+    if (!text) {
+        return `Ошибка сервера: ${response.status}`;
+    }
+
+    try {
+        const parsed = JSON.parse(text);
+
+        if (typeof parsed === 'string') return parsed;
+        return parsed.message || parsed.title || text;
+    } catch {
+        return text;
+    }
+}
+
 export default function CartPage() {
     const cart = useCartStore((state) => state.items);
     const setQty = useCartStore((state) => state.setQty);
     const remove = useCartStore((state) => state.remove);
     const clear = useCartStore((state) => state.clear);
     const comment = useCartStore((state) => state.comment);
-    const setComment = useCartStore((state) => state.setComment);
-    const batches = useInventoryStore((state) => state.batches);
 
-    const [customerName, setCustomerName] = useState('');
-    const [phone, setPhone] = useState('');
-    const phoneInputRef = useRef(null);
     const fulfillment = useUiStore((state) => state.fulfillment);
     const setFulfillment = useUiStore((state) => state.setFulfillment);
-    const [confirmation, setConfirmation] = useState('');
-    const [modalOpen, setModalOpen] = useState(false);
 
-    const availability = useMemo(
-        () => checkCart(cart, dishes, batches),
-        [cart, batches],
+    const [menuDishes, setMenuDishes] = useState([]);
+    const [menuLoading, setMenuLoading] = useState(true);
+    const [menuError, setMenuError] = useState('');
+    const [customerName, setCustomerName] = useState('');
+    const [phone, setPhone] = useState('');
+    const [confirmation, setConfirmation] = useState('');
+    const [orderSucceeded, setOrderSucceeded] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+
+    const phoneInputRef = useRef(null);
+
+    useEffect(() => {
+        const controller = new AbortController();
+
+        async function loadMenu() {
+            try {
+                setMenuLoading(true);
+                setMenuError('');
+
+                const response = await fetch('/api/v1/menu/', {
+                    signal: controller.signal,
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Не удалось загрузить меню: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                setMenuDishes([
+                    ...mapMenuGroup(data.popular, 'popular'),
+                    ...mapMenuGroup(data.main, 'main'),
+                    ...mapMenuGroup(data.inaccessible, 'inaccessible'),
+                ]);
+            } catch (error) {
+                if (error.name !== 'AbortError') {
+                    setMenuError(error.message || 'Не удалось загрузить меню');
+                }
+            } finally {
+                if (!controller.signal.aborted) {
+                    setMenuLoading(false);
+                }
+            }
+        }
+
+        loadMenu();
+
+        return () => controller.abort();
+    }, []);
+
+    const dishById = useMemo(
+        () => new Map(menuDishes.map((dish) => [dish.id, dish])),
+        [menuDishes],
     );
 
+    const cartHasUnknownDish = cart.some((item) => !dishById.has(item.dishId));
+
+    const cartHasUnavailableDish = cart.some((item) => {
+        const dish = dishById.get(item.dishId);
+        return dish && dish.menuGroup === 'inaccessible';
+    });
+
     const total = cart.reduce((sum, item) => {
-        const dish = dishes.find((entry) => entry.id === item.dishId);
+        const dish = dishById.get(item.dishId);
         return sum + (dish?.price || 0) * item.qty;
     }, 0);
 
@@ -123,7 +201,7 @@ export default function CartPage() {
         });
     };
 
-    const submitOrder = () => {
+    const submitOrder = async () => {
         if (!customerName.trim()) {
             toast.error('Введите, пожалуйста, ваше имя');
             return;
@@ -134,30 +212,83 @@ export default function CartPage() {
             return;
         }
 
-        const result = useInventoryStore.getState().placeOrder(cart);
-
-        if (!result.ok) {
-            const details = result.missing
-                .map((item) => {
-                    const product = products.find((entry) => entry.id === item.productId);
-                    return product
-                        ? `${product.name}: нужно ${quantity(item.need)} ${product.unit}, доступно ${quantity(item.have)} ${product.unit}`
-                        : 'Некоторые блюда сейчас недоступны';
-                })
-                .join('; ');
-
-            toast.error('Не удалось оформить заказ. Обновите корзину.');
-            setConfirmation(`Заказ не оформлен: ${details}`);
-            setModalOpen(true);
+        if (menuLoading || menuError) {
+            toast.error('Не удалось проверить меню. Попробуйте обновить страницу.');
             return;
         }
 
-        const orderNumber = `ORD-${String(Date.now()).slice(-6)}`;
+        if (cartHasUnknownDish) {
+            toast.error('Некоторые блюда отсутствуют в текущем меню. Удалите их из корзины.');
+            return;
+        }
 
-        clear();
-        setConfirmation(`Заказ ${orderNumber} принят! Мы скоро начнём его готовить.`);
-        setModalOpen(true);
-        toast.success(`Заказ ${orderNumber} оформлен`);
+        if (cartHasUnavailableDish) {
+            toast.error('Некоторые блюда сейчас недоступны. Удалите их из корзины.');
+            return;
+        }
+
+        if (cart.length === 0) {
+            toast.error('Корзина пуста');
+            return;
+        }
+
+        const orderBody = {
+            created: new Date().toISOString(),
+            payment: total,
+            status: 0,
+            dishes: cart.map((item) => {
+                const dish = dishById.get(item.dishId);
+
+                return {
+                    dishName: dish.name,
+                    dishPrice: dish.price,
+                    count: item.qty,
+                };
+            }),
+        };
+
+        try {
+            setSubmitting(true);
+
+            const response = await fetch('/api/v1/order/makeOrder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(orderBody),
+            });
+
+            if (!response.ok) {
+                const message = await getResponseMessage(response);
+
+                if (message.toLowerCase().includes('order cancelled')) {
+                    setOrderSucceeded(false);
+                    setConfirmation(
+                        'Backend отменил заказ: не хватило ингредиентов. Заказ записан как отменённый; корзина сохранена.',
+                    );
+                    setModalOpen(true);
+                    toast.error('Заказ отменён: не хватило ингредиентов');
+                    return;
+                }
+
+                throw new Error(message);
+            }
+
+            const orderNumber = `ORD-${String(Date.now()).slice(-6)}`;
+
+            clear();
+            setOrderSucceeded(true);
+            setConfirmation(`Заказ ${orderNumber} принят!`);
+            setModalOpen(true);
+            toast.success('Заказ оформлен');
+        } catch (error) {
+            setOrderSucceeded(false);
+            setConfirmation(error.message || 'Не удалось оформить заказ');
+            setModalOpen(true);
+            toast.error(error.message || 'Не удалось оформить заказ');
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     if (cart.length === 0) {
@@ -169,6 +300,13 @@ export default function CartPage() {
         );
     }
 
+    const orderBlocked =
+        menuLoading ||
+        Boolean(menuError) ||
+        cartHasUnknownDish ||
+        cartHasUnavailableDish ||
+        submitting;
+
     return (
         <div className="cart-page">
             <header className="cart-page__heading">
@@ -178,26 +316,72 @@ export default function CartPage() {
                 </p>
             </header>
 
-            {!availability.available && (
+            {menuLoading && <p>Загружаем меню…</p>}
+
+            {menuError && (
                 <div className="cart-alert" role="alert">
-                    Некоторые блюда стали недоступны. Измените количество или удалите их из заказа.
+                    {menuError}
+                </div>
+            )}
+
+            {!menuLoading && !menuError && cartHasUnknownDish && (
+                <div className="cart-alert" role="alert">
+                    Одно или несколько блюд из сохранённой корзины отсутствуют в
+                    меню. Удалите такие позиции и добавьте блюда заново из меню.
+                </div>
+            )}
+
+            {!menuLoading && !menuError && cartHasUnavailableDish && (
+                <div className="cart-alert" role="alert">
+                    Некоторые блюда сейчас недоступны. Удалите их из заказа,
+                    чтобы продолжить.
                 </div>
             )}
 
             <div className="cart-items">
                 {cart.map((item) => {
-                    const dish = dishes.find((entry) => entry.id === item.dishId);
-                    if (!dish) return null;
+                    const dish = dishById.get(item.dishId);
 
-                    const maxQty = maxCartDishQuantity(cart, dish, batches, dishes);
+                    if (!dish) {
+                        return (
+                            <article className="cart-item" key={item.dishId}>
+                                <div className="cart-item__details">
+                                    <h2 className="cart-item__name">
+                                        Блюдо больше недоступно в меню
+                                    </h2>
+                                    <p className="cart-item__meta">
+                                        Удалите позицию и добавьте блюдо снова из меню.
+                                    </p>
+                                </div>
+
+                                <button
+                                    className="remove-button"
+                                    type="button"
+                                    aria-label="Удалить недоступное блюдо из корзины"
+                                    onClick={() => remove(item.dishId)}
+                                >
+                                    <Trash2 size={17} aria-hidden="true" />
+                                </button>
+                            </article>
+                        );
+                    }
 
                     return (
                         <article className="cart-item" key={item.dishId}>
-                            <img className="cart-item__image" src={dish.image} alt={dish.name} />
+                            {dish.image && (
+                                <img
+                                    className="cart-item__image"
+                                    src={dish.image}
+                                    alt={dish.name}
+                                />
+                            )}
+
                             <div className="cart-item__details">
                                 <h2 className="cart-item__name">{dish.name}</h2>
                                 <p className="cart-item__meta">
-                                    {dish.weight} г · {money(dish.price)}
+                                    {money(dish.price)}
+                                    {dish.menuGroup === 'inaccessible' &&
+                                        ' · Недоступно'}
                                 </p>
                             </div>
 
@@ -206,20 +390,28 @@ export default function CartPage() {
                                     className="quantity-button"
                                     type="button"
                                     aria-label={`Уменьшить количество ${dish.name}`}
-                                    onClick={() => setQty(item.dishId, item.qty - 1)}
+                                    onClick={() =>
+                                        setQty(item.dishId, item.qty - 1)
+                                    }
                                 >
                                     −
                                 </button>
-                                <span className="cart-item__quantity">{item.qty}</span>
+
+                                <span className="cart-item__quantity">
+                                    {item.qty}
+                                </span>
+
                                 <button
                                     className="quantity-button quantity-button--accent"
                                     type="button"
                                     aria-label={`Увеличить количество ${dish.name}`}
-                                    disabled={item.qty >= maxQty}
-                                    onClick={() => setQty(item.dishId, item.qty + 1)}
+                                    onClick={() =>
+                                        setQty(item.dishId, item.qty + 1)
+                                    }
                                 >
                                     +
                                 </button>
+
                                 <button
                                     className="remove-button"
                                     type="button"
@@ -238,7 +430,9 @@ export default function CartPage() {
                 <h2 className="checkout-card__title">Как получить заказ</h2>
 
                 <label className="form-field">
-                    <span className="visually-hidden">Способ получения заказа</span>
+                    <span className="visually-hidden">
+                        Способ получения заказа
+                    </span>
                     <select
                         value={fulfillment}
                         onChange={(event) => setFulfillment(event.target.value)}
@@ -266,7 +460,9 @@ export default function CartPage() {
                     <input
                         ref={phoneInputRef}
                         value={phone}
-                        onChange={(event) => setPhone(formatRussianPhone(event.target.value))}
+                        onChange={(event) =>
+                            setPhone(formatRussianPhone(event.target.value))
+                        }
                         onKeyDown={handlePhoneKeyDown}
                         placeholder="+7-(999)-999-99-99"
                         aria-label="Номер телефона"
@@ -279,13 +475,15 @@ export default function CartPage() {
                 </label>
 
                 <label className="form-field">
-                    <span className="visually-hidden">Комментарий к заказу</span>
+                    <span className="visually-hidden">
+                        Комментарий к заказу
+                    </span>
                     <textarea
                         value={comment}
-                        onChange={(event) => setComment(event.target.value)}
                         placeholder="Комментарий к заказу, если нужен"
                         aria-label="Комментарий к заказу"
                         rows={3}
+                        readOnly
                     />
                 </label>
 
@@ -297,17 +495,11 @@ export default function CartPage() {
                 <button
                     className="checkout-submit"
                     type="button"
-                    disabled={!availability.available}
+                    disabled={orderBlocked}
                     onClick={submitOrder}
                 >
-                    Подтвердить заказ
+                    {submitting ? 'Отправляем заказ…' : 'Подтвердить заказ'}
                 </button>
-
-                {!availability.available && (
-                    <p className="checkout-hint">
-                        Сейчас нельзя оформить заказ: изменилось наличие некоторых блюд.
-                    </p>
-                )}
             </section>
 
             {modalOpen &&
@@ -316,7 +508,9 @@ export default function CartPage() {
                         className="modal-backdrop"
                         role="presentation"
                         onMouseDown={(event) => {
-                            if (event.target === event.currentTarget) setModalOpen(false);
+                            if (event.target === event.currentTarget) {
+                                setModalOpen(false);
+                            }
                         }}
                     >
                         <section
@@ -333,12 +527,15 @@ export default function CartPage() {
                             >
                                 <X size={19} />
                             </button>
+
                             <h2 id="result-modal-title">
-                                {confirmation.startsWith('Заказ ORD-')
+                                {orderSucceeded
                                     ? 'Заказ принят'
                                     : 'Не получилось оформить заказ'}
                             </h2>
+
                             <p>{confirmation}</p>
+
                             <button
                                 className="checkout-submit result-modal__button"
                                 type="button"
