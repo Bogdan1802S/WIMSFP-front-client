@@ -66,6 +66,7 @@ export default function CartPage() {
     const remove = useCartStore((state) => state.remove);
     const clear = useCartStore((state) => state.clear);
     const comment = useCartStore((state) => state.comment);
+    const setComment = useCartStore((state) => state.setComment);
 
     const fulfillment = useUiStore((state) => state.fulfillment);
     const setFulfillment = useUiStore((state) => state.setFulfillment);
@@ -476,15 +477,13 @@ export default function CartPage() {
                 </label>
 
                 <label className="form-field">
-                    <span className="visually-hidden">
-                        Комментарий к заказу
-                    </span>
+                    <span className="visually-hidden">Комментарий к заказу</span>
                     <textarea
                         value={comment}
+                        onChange={(event) => setComment(event.target.value)}
                         placeholder="Комментарий к заказу, если нужен"
                         aria-label="Комментарий к заказу"
                         rows={3}
-                        readOnly
                     />
                 </label>
 
