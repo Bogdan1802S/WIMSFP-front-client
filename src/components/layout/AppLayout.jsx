@@ -35,7 +35,7 @@ export default function AppLayout() {
                 <div className="site-header__inner">
                     <Link className="brand" to="/" aria-label="Тёплый двор — на главную">
             <span className="brand__mark" aria-hidden="true">
-              🍲
+              <img src="/restaurant.svg" alt="" />
             </span>
                         <span className="brand__copy">
               <span className="brand__name">Тёплый двор</span>

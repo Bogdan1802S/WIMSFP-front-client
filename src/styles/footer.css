@@ -354,3 +354,10 @@ a.footer-contact__item:hover {
         font-size: 10px;
     }
 }
+
+.footer-brand__mark img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}

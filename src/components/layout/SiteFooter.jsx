@@ -49,7 +49,7 @@ export default function SiteFooter() {
                             aria-label="Тёплый двор — на главную"
                         >
               <span className="footer-brand__mark" aria-hidden="true">
-                🍲
+                <img src="/restaurant.svg" alt="" />
               </span>
                             <span>
                 <strong id="footer-brand-title">Тёплый двор</strong>
